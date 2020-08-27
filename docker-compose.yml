@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  dnd-master-backend:
+    restart: unless-stopped
+    build: ./backend/
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend/:/usr/src/app/
+    ports:
+      - 8008:8000
+  dnd-master-frontend:
+    restart: unless-stopped
+    build: ./frontend/
+    ports:
+      - 80:80
