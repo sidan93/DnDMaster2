@@ -1,8 +1,13 @@
 import React from "react";
-import {Table} from "antd";
-
+import {Table, PageHeader, Button} from "antd";
+import {EditOutlined} from "@ant-design/icons"
+import EditSpell from "./edit/edit";
 
 class SpellBook extends React.Component {
+
+  state = {
+    edit: React.createRef()
+  }
 
   render() {
     const dataSource = [
@@ -48,10 +53,33 @@ class SpellBook extends React.Component {
         dataIndex: 'description',
         key: 'description',
       },
+      {
+        title: '',
+        key: 'action',
+        render: () => {
+          return (
+            <Button
+              icon={<EditOutlined />}
+              onClick={() => this.state.edit.show()}
+            />
+          );
+        }
+      }
     ];
     return (
       <div>
+        <PageHeader
+          title="Книга заклинаний"
+          extra={[
+            <Button
+              key="1"
+              type="primary"
+              onClick={() => {this.state.edit.current.show()}}
+            >Добавить</Button>
+          ]}
+        />
         <Table dataSource={dataSource} columns={columns} />
+        <EditSpell ref={this.state.edit}/>
       </div>
     )
   }

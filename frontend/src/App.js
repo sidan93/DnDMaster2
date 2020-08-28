@@ -1,7 +1,8 @@
 import React from "react";
-import { Layout, Menu } from "antd";
+
+import {Layout, Menu} from "antd";
 import "./App.css";
-import SpellBook from "./components/spellbook/spellbook"
+import SpellBook from "./components/spellbook/spellbook";
 import {
   BrowserRouter as Router,
   Switch,
@@ -25,8 +26,8 @@ export default class App extends React.Component {
       url: "/spellbook",
       nav_title: "Книга заклинаний",
       icon: <BookOutlined/>,
-      content: (<SpellBook/>)
-    }
+      content: <SpellBook/>
+    },
   ];
 
   state = {
