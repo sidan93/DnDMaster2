@@ -1,12 +1,14 @@
 import React from "react";
 import { Layout, Menu } from "antd";
 import "./App.css";
+import SpellBook from "./components/spellbook/spellbook"
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link
 } from "react-router-dom";
+import {BookOutlined, HomeOutlined} from "@ant-design/icons"
 
 const { Content } = Layout;
 
@@ -15,18 +17,15 @@ export default class App extends React.Component {
   items = [
     {
       url: "/",
-      nav_title: "Option 1",
+      nav_title: "Главная",
+      icon: <HomeOutlined />,
       content: "Option 1"
     },
     {
-      url: "/second",
-      nav_title: "Option 2",
-      content: "Option 2"
-    },
-    {
-      url: "/three",
-      nav_title: "Option 3",
-      content: "Option 3"
+      url: "/spellbook",
+      nav_title: "Книга заклинаний",
+      icon: <BookOutlined/>,
+      content: (<SpellBook/>)
     }
   ];
 
@@ -49,7 +48,10 @@ export default class App extends React.Component {
               )}
             >
               {this.items.map((item) => (
-                <Menu.Item key={item.url}>
+                <Menu.Item
+                  key={item.url}
+                  icon={item.icon}
+                >
                   <Link to={item.url}>{item.nav_title}</Link>
                 </Menu.Item>
               ))}
