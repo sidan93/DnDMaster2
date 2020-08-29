@@ -10,41 +10,30 @@ import {
 } from "antd";
 import MagicSchool from "../../../const/magic_school";
 
+const layout = {
+  labelCol: {
+    span: 4,
+  },
+  wrapperCol: {
+    span: 30,
+  },
+};
+
 class EditSpell extends React.Component {
+  form = React.createRef();
+
+  static getDerivedStateFromProps(nextProps) {
+    return {
+      visible : nextProps.isOpen,
+      record: nextProps.currentRecord,
+    };
+  }
+
   state = {
     visible: false,
     sending: false,
-    form: React.createRef(),
     record: null
   };
-
-  layout = {
-    labelCol: {
-      span: 4,
-    },
-    wrapperCol: {
-      span: 30,
-    },
-  };
-
-  async setStateAsync(stateUpdate) {
-    return new Promise(resolve => {
-      this.setState(stateUpdate, () => resolve());
-    });
-  }
-
-  async show(record) {
-    await this.setStateAsync({record})
-
-    if (this.state.form.current)
-      this.state.form.current.resetFields();
-
-    this.setVisible(true);
-  }
-
-  setVisible(visible) {
-    this.setState({visible});
-  }
 
   async onClose(isOk) {
     if (this.state.sending) {
@@ -56,29 +45,29 @@ class EditSpell extends React.Component {
     }
 
     if (!isOk) {
-      this.setVisible(false);
-      return;
+      return this.props.onCloseEdit();
     }
 
-    if (!await this.state.form.current.validateFields())
+    if (!await this.form.current.validateFields())
       return;
 
-    this.setState({sending: true});
+    this.setState({ sending: true });
     setTimeout(() => {
-      this.setState({sending: false});
-      this.setVisible(false);
+      this.setState({ sending: false }, this.props.onCloseEdit);
       message.success('Заклинание добавлено');
-      console.log('getFieldsValue', this.state.form.current.getFieldsValue());
+      console.log('getFieldsValue', this.form.current.getFieldsValue());
     }, 30);
+
   }
 
   render() {
     return (
       <div>
         <Drawer
+          destroyOnClose
           title="Vertically centered modal dialog"
+          onClose={() => this.onClose(false)}
           visible={this.state.visible}
-          onClose={this.onClose.bind(this, false)}
           width="50vw"
           footer={
             <div
@@ -86,10 +75,10 @@ class EditSpell extends React.Component {
                 textAlign: 'right',
               }}
             >
-              <Button onClick={this.onClose.bind(this, false)} style={{marginRight: 8}}>
+              <Button onClick={() => this.onClose(false)} style={{marginRight: 8}}>
                 Отмена
               </Button>
-              <Button onClick={this.onClose.bind(this, true)} type="primary">
+              <Button onClick={() => this.onClose(true)} type="primary">
                 Ок
               </Button>
             </div>
@@ -97,9 +86,9 @@ class EditSpell extends React.Component {
         >
           <Spin spinning={this.state.sending}>
             <Form
-              ref={this.state.form}
+              ref={this.form}
               name="edit_spell"
-              {...this.layout}
+              {...layout}
             >
               <Form.Item
                 name="title"

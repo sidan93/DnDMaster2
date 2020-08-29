@@ -4,69 +4,86 @@ import {EditOutlined} from "@ant-design/icons"
 import EditSpell from "./edit/edit";
 import MagicSchool from "../../const/magic_school";
 
+const dataSource = [
+  {
+    key: '1',
+    name: 'Телепортация',
+    subname: 'Очень длинная',
+    level: 4,
+    type: 'Особое',
+    school: ['water', 'fire'],
+    description: 'Кол-во = 4цели = 1 + 2 + 3 Дальность = 720футов = (3+6+9)*4*10'
+  }
+];
+
+const dataColumns =  [{
+    title: 'Название',
+    dataIndex: 'name',
+    key: 'name',
+  }, {
+    title: 'Подназвание',
+    dataIndex: 'subname',
+    key: 'subname',
+  }, {
+    title: 'Уровень',
+    dataIndex: 'level',
+    key: 'level',
+  }, {
+    title: 'Тин',
+    dataIndex: 'type',
+    key: 'type',
+  }
+  ];
+
 class SpellBook extends React.Component {
 
   state = {
-    edit: React.createRef()
+    columns: [],
+    showEdit: false,
+    currentRecord: null,
   }
 
-  render() {
-    const dataSource = [
-      {
-        key: '1',
-        name: 'Телепортация',
-        subname: 'Очень длинная',
-        level: 4,
-        type: 'Особое',
-        school: ['water', 'fire'],
-        description: 'Кол-во = 4цели = 1 + 2 + 3 Дальность = 720футов = (3+6+9)*4*10'
-      }
-    ];
+  componentDidMount() {
+    this.setState({
+      columns: [
+        ...dataColumns,
+        {
+          title: 'Школа',
+          dataIndex: 'school',
+          render: this.renderSchoolCell,
+        }, {
+          title: 'Описание',
+          dataIndex: 'description',
+          key: 'description',
+        }, {
+          title: '',
+          key: 'actionEdit',
+          render: this.renderEditButton,
+        }],
+    })
+  }
 
-    const columns = [
-      {
-        title: 'Название',
-        dataIndex: 'name',
-        key: 'name',
-      },
-      {
-        title: 'Подназвание',
-        dataIndex: 'subname',
-        key: 'subname',
-      },
-      {
-        title: 'Уровень',
-        dataIndex: 'level',
-        key: 'level',
-      },
-      {
-        title: 'Тин',
-        dataIndex: 'type',
-        key: 'type',
-      },
-      {
-        title: 'Школа',
-        dataIndex: 'school',
-        render: (text, record) => record.school?.map(i => MagicSchool[i]?.title).join(', ')
-      },
-      {
-        title: 'Описание',
-        dataIndex: 'description',
-        key: 'description',
-      },
-      {
-        title: '',
-        key: 'action',
-        render: (text, record) => {
-          return (
-            <Button
-              icon={<EditOutlined />}
-              onClick={() => this.state.edit.current.show(record)}
-            />
-          );
-        }
-      }
-    ];
+  toggleOpenEdit = (record = []) =>
+    this.setState(
+      ({ showEdit }) => ({
+        showEdit: !showEdit,
+        currentRecord: record
+      })
+  );
+
+  renderEditButton = (text, record) => (
+    <Button
+      icon={<EditOutlined />}
+      onClick={() => this.toggleOpenEdit(record)}
+    />
+  );
+
+  renderSchoolCell = (text, record) => record
+    .school?.map(i => MagicSchool[i]?.title).join(', ');
+
+  render() {
+    const { columns, showEdit, currentRecord } = this.state;
+
     return (
       <div>
         <PageHeader
@@ -75,12 +92,18 @@ class SpellBook extends React.Component {
             <Button
               key="1"
               type="primary"
-              onClick={() => {this.state.edit.current.show()}}
-            >Добавить</Button>
+              onClick={this.toggleOpenEdit}
+            >
+              Добавить
+            </Button>
           ]}
         />
         <Table dataSource={dataSource} columns={columns} />
-        <EditSpell ref={this.state.edit}/>
+        <EditSpell
+          isOpen={showEdit}
+          currentRecord={currentRecord}
+          onCloseEdit={this.toggleOpenEdit}
+        />
       </div>
     )
   }
