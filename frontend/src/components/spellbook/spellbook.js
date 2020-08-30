@@ -2,6 +2,7 @@ import React from "react";
 import {Table, PageHeader, Button} from "antd";
 import {EditOutlined} from "@ant-design/icons"
 import EditSpell from "./edit/edit";
+import EditSpellDrawer from "./edit/EditForm";
 import MagicSchool from "../../const/magic_school";
 
 const dataSource = [
@@ -63,18 +64,21 @@ class SpellBook extends React.Component {
     })
   }
 
-  toggleOpenEdit = (record = []) =>
-    this.setState(
-      ({ showEdit }) => ({
-        showEdit: !showEdit,
-        currentRecord: record
-      })
-  );
+  toggleOpenEdit = () =>
+    this.setState(({ showEdit,}) => ({
+      showEdit: !showEdit,
+      currentRecord: null
+    }));
+
+  onOpenEditRecord = (record) => this.setState({
+    showEdit: true,
+    currentRecord: record,
+  });
 
   renderEditButton = (text, record) => (
     <Button
       icon={<EditOutlined />}
-      onClick={() => this.toggleOpenEdit(record)}
+      onClick={() => this.onOpenEditRecord(record)}
     />
   );
 
@@ -99,9 +103,16 @@ class SpellBook extends React.Component {
           ]}
         />
         <Table dataSource={dataSource} columns={columns} />
-        <EditSpell
+
+        {/*<EditSpell*/}
+        {/*  isOpen={showEdit}*/}
+        {/*  currentRecord={currentRecord}*/}
+        {/*  onCloseEdit={this.toggleOpenEdit}*/}
+        {/*/>*/}
+
+        <EditSpellDrawer
           isOpen={showEdit}
-          currentRecord={currentRecord}
+          record={currentRecord}
           onCloseEdit={this.toggleOpenEdit}
         />
       </div>
